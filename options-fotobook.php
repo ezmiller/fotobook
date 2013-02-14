@@ -12,7 +12,10 @@ $fb_appSecret       = ( isset($_POST['appSecret']) ) ? $_POST['appSecret'] : get
 // If they are not set, instruct the user that they must create an App and provide
 // the AppID and App Secret in order to use the plugin.
 if ( empty($fb_appId)  || empty($fb_appSecret) ) : ?>
+<div class="wrap">
+    <h2>Setup</h2>
     <form method="post" id="app-setup" action="<?php echo FB_OPTIONS_URL; ?>">
+        <h3>Link to Facebok App</h3>
         <table class="form-table" style="clear:none;">
             <tr valign="top">
                 <th scope="row">Application ID</th>
@@ -35,11 +38,41 @@ if ( empty($fb_appId)  || empty($fb_appSecret) ) : ?>
                 </td>
             </tr>
             <tr>
-                <td><input type="submit" name="submit" class="button-secondary" value="Link Facebook App" /></td>
+                <td><input type="submit" name="submit" class="button-secondary" value="Link It Up" /></td>
             </tr>
         </table>
     </form>
-            
+    <br/>
+    <div class="updated" style="width: 55%">
+        <h3>Instructions</h3>
+        <p>
+        In order to use this plugin you must link it to a Facebook "App" that you have created using Facebook's App Dashboard
+        for developers. Here's how to do that:
+        <ul>
+            <li>
+                1. Login to your facebook account and then click on <a href="https://developers.facebook.com/apps" target="_blank">
+                this link</a>. 
+            </li>
+            <li>
+                2. On the page, find the "Create New App" button at the top right, and click it to createa new Facebook App. 
+            </li>
+            <li>
+                3. A box will pop up. Fill out the App Name field. You can select any app name that you like as long as FB 
+                says that it is valid. If the name is valid, the word "Valid" should appear to the right of the field. When
+                you are done click "Continue".
+            </li>
+            <li>
+                4. Under the section "Select how your app integrates with Facebook," look for the field "Website with Facebook Login." Click on the check mark, 
+                and then enter the following url into that field: "<strong><?php echo get_bloginfo('siteurl').'/'.$_SERVER['REQUEST_URI']; ?>"</strong>.
+                Once you are done, save the changes.
+            </li>
+            <li>
+                5. As the final step, copy the App ID and App Secret into the fields above, and then link fotobook to your new app.
+            </li>
+        </ul>
+        </p>
+    </div>
+</div>
 <?php 
 elseif ( !empty($fb_appId) && !empty($fb_appSecret) ) : 
     // If the App Id and App Secret are already set then  either the user just set them, or they
