@@ -1,0 +1,170 @@
+#fotobook-main a {
+  font-weight: bold;
+  font-size: inherit;
+}
+
+#fotobook-main {
+  font-size: inherit;
+  width: 100%;
+  border-spacing: 0;
+}
+
+#fotobook-main img {
+  border: 0;
+}
+
+#fotobook-photo {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+#fotobook-photo img {
+  border: 0;
+}
+
+#fotobook-album {
+  margin: 0px;
+  padding: 5px;
+  width: 100%;
+  border-bottom: solid 1px #D8DFEA;
+}
+
+#fotobook-album .row {
+  width: 100%;
+  height: 180px;
+}
+
+#fotobook-album .photo {
+  float: left;
+  width: 27.7%;
+  height: 100%;
+  margin: 0 12px;
+  text-align: center;
+}
+
+#fotobook-album a {
+  display: block;
+  height: 100%;
+}
+
+#fotobook-album img {
+  background: white;
+  padding: 6px;
+  border: solid 1px #ccc; 
+}
+
+#fotobook-album img:hover {
+  border: solid 1px #3B5998; }
+  
+#fotobook-info {
+  font-size: 10px;
+  margin-top: 10px;
+  text-align: left;
+}
+
+#fotobook-info th, #fotobook-info td {
+  padding: 3px;
+}
+
+#fotobook-info th {
+  font-weight: bold;
+  vertical-align: top;
+}
+
+#fotobook-album-list {
+  position: absolute; /* offscreen at first to hide styling, moved by jquery in embedded.js */
+  top: -9999px;
+  left: -9999px;
+}
+
+.fotobook-album-entry {
+  display: block;
+  margin-bottom: 32px;
+}
+
+.fotobook-album-thumb {
+  display: block;
+  float: left;
+}
+
+.fotobook-album-thumb a {
+  display: inline-block;
+  background: white;
+  border: solid 1px #CCC;
+  padding: 4px;
+  outline: none;
+  position: relative;
+  vertical-align: bottom;
+}
+
+.fotobook-album-thumb-wrap {
+  background-color: white;
+  z-index: 2000;
+  padding: 4px;
+  border: solid 1px #CCC;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+}
+
+.fotobook-album-thumb a,
+.fotobook-album-thumb a:hover,
+.fotobook-album-thumb-wrap,
+.fotobook-album-thumb-wrap:hover {
+  border-color: #3b5998;
+}
+
+.fotobook-album-meta {
+  float: left;
+  margin-left: 30px;
+  max-width: 65%;
+}
+
+.fotobook-album-meta a {
+  font-weight: bold;
+}
+
+.album-size {
+
+}
+
+.fotobook-subheader {
+  display: inline-block;
+  clear: both;
+  width: 100%;
+}
+
+.fotobook-subheader .main {
+  float: left;
+  text-align: left;
+}
+
+.fotobook-subheader .pagination {
+  padding-left: 4px;
+  width: 100%;
+  font-size: 16px;
+  text-transform: uppercase; 
+}
+
+.fotobook-subheader .pagination b {
+  padding: 2px;
+  font-style: normal;
+  font-weight: bold;
+  color: #3B5998;
+  border-bottom: solid 2px;
+}
+
+.fotobook-subheader .pagination a {
+  display: block;
+  color: #00AEEF; 
+}
+
+.fotobook-subheader .previous {
+  float: left;
+}
+
+.fotobook-subheader .next {
+  float: right;
+}
+
+.fotobook-subheader .pagination a:hover {}
