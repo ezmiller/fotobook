@@ -11,23 +11,24 @@
 
 <?php // BUILD THE PHOTO TABLE ?>
 
-<table id="fotobook-album">
-  <tr>
+<div id="fotobook-album">
+    <div class="row">
     <?php foreach($photos as $key=>$photo): ?>
-    <td>
-      <a href='<?php echo $photo['src_big'] ?>' rel='fotobook' title="<?php echo $photo['caption'] ?>" id="photo<?php echo $photo['ordinal'] ?>">
-        <img src='<?php echo $photo['src'] ?>' alt="<?php echo $photo['caption'] ?>" style='max-width: <?php echo $thumb_size ?>px; max-height: <?php echo $thumb_size ?>px; _width: expression(this.width > <?php echo $thumb_size ?> ? <?php echo $thumb_size ?> : true); _height: expression(this.height > <?php echo $thumb_size ?> ? <?php echo $thumb_size ?>: true);' />
-      </a>
-    </td>
-    <?php
-    if($key % $number_cols == 0) echo '</tr><tr>';
-    endforeach;
-    for($i = 0; $i < ($number_cols - (count($photos) % $number_cols)); $i++) {
-      echo "<td>&nbsp;</td>";
-    }
-    ?>
-  </tr>      
-</table>
+      <div class="photo">
+        <?php $link = $page_link.(strstr($page_link, '?') ? '&amp;photo='.$key : '?photo='.$key) ?>
+        <a href='<?php echo $link ?>' title="<?php echo $photo['caption'] ?>">
+          <img src='<?php echo $photo['src'] ?>' alt="<?php echo $photo['caption'] ?>" style='max-width: <?php echo $thumb_size ?>px; max-height: <?php echo $thumb_size ?>px; _width: expression(this.width > <?php echo $thumb_size ?> ? <?php echo $thumb_size ?>: true); _height: expression(this.height > <?php echo $thumb_size ?> ? <?php echo $thumb_size ?>: true);' />
+        </a>
+      </div>
+      <?php
+      if($key % $number_cols == 0) { echo '</div><div class="row">'; }
+      endforeach;
+      /*for($i = 0; $i < ($number_cols - (count($photos) % $number_cols)); $i++) {
+        echo "<td>&nbsp;</td>";
+      }*/
+      ?>
+  </div>      
+</div>
 
 <div class="fotobook-subheader fotobook-subheader-bottom">
   <span class='main'>Photos <?php echo ($first_photo)." - ".($last_photo) ?> out of <?php echo $photo_count ?> | <a href='<?php echo $albums_page_link ?>'>Back to Albums</a></span>

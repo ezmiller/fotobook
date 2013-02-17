@@ -128,6 +128,7 @@ elseif ( !empty($fb_appId) && !empty($fb_appSecret) ) :
     if (isset($_POST['submit'])) {
         fb_options_update_albums_page($_POST['fb_albums_page']);    
         update_option('fb_number_rows', $_POST['fb_number_rows']);
+        echo 'style: '.$_POST['fb_style'];
         update_option('fb_style', $_POST['fb_style']);
         if($_POST['fb_number_cols'] != 0) {
             update_option('fb_number_cols', $_POST['fb_number_cols']);
