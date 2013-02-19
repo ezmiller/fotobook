@@ -78,8 +78,7 @@ $fb_message = null;
 function fb_admin_scripts() {
 	wp_enqueue_style('fotobook-css', FB_PLUGIN_URL.'styles/admin-styles.css');
 	wp_enqueue_script('fotobook-js', FB_PLUGIN_URL.'js/admin.js', array('jquery', 'jquery-ui-sortable'), FB_VERSION);
-	wp_enqueue_script('colorbox', FB_PLUGIN_URL.'styles/colorbox/js/colorbox.js');
-	wp_enqueue_script('colorbox', FB_PLUGIN_URL.'styles/colorbox/js/colorbox.js');
+	wp_enqueue_script('colorbox', FB_PLUGIN_URL.'styles/colorbox/js/jquery.colorbox-min.js');
 	wp_enqueue_style('colorbox', FB_PLUGIN_URL.'styles/colorbox/colorbox.css');
 }
 add_action('load-fotobook/manage-fotobook.php', 'fb_admin_scripts');
@@ -783,6 +782,7 @@ function fb_display_main($content) {
 	foreach($albums as $key=>$album) {
 		$albums[$key]['link']	= get_permalink($albums[$key]['page_id']);
 		$albums[$key]['thumb'] = fb_get_photo($albums[$key]['cover_pid'], 'thumb');
+		$albums[$key]['big_thumb'] = fb_get_photo($albums[$key]['cover_pid'],'full');
 	}
 
 	include(FB_STYLE_PATH.'main.php');
@@ -989,7 +989,7 @@ function fb_display_scripts() {
 	if ($post->ID == $albums_page || $post->post_parent == $albums_page) {
 		if (get_option('fb_style') == 'colorbox') {
 			wp_enqueue_script('jquery');
-			wp_enqueue_script('jquery-colorbox', FB_STYLE_URL . 'js/colorbox.js', array('jquery'));
+			wp_enqueue_script('jquery-colorbox', FB_STYLE_URL . 'js/jquery.colorbox-min.js', array('jquery'));
 		}
 		if (get_option('fb_style') == 'embedded') { 
 			wp_enqueue_script('fotobook-embedded-style', FB_STYLE_URL . 'embedded.js', array('jquery'));

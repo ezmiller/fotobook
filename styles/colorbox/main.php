@@ -16,12 +16,12 @@ foreach($albums as $album):
     <div class="fotobook-album-thumb clearfix">
       <a href="<?php echo $album['link'] ?>">
           <span class="fotobook-album-thumb-wrap">
-            <img src="<?php echo $album['thumb'] ?>" alt="<?php echo $album['name'] ?>" />
+            <img src="<?php echo $album['big_thumb'] ?>" alt="<?php echo $album['name'] ?>" />
           </span>
       </a>
     </div>
     <div class="fotobook-album-meta clearfix">
-      <a href='<?php echo $album['link'] ?>'><?php echo $album['name']; ?></a><br/>
+      <a href='<?php echo $album['link'] ?>'><span class="album-title"><?php echo $album['name']; ?></span></a><br/>
       <?php if($album['description'] != ''): echo '<span class="description">' . $album['description'] . '</span><br/>' ?><?php endif; ?>
       <span class="album-size"><?php echo $album['size'] ?> photos</span>
     </div>

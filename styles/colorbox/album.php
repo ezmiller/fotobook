@@ -1,7 +1,7 @@
 <?php // DISPLAY PAGINATION AND LINK BACK TO MAIN PAGE ?>
 
 <div class="fotobook-subheader">
-  <span class='main'>Photos <?php echo ($first_photo)." - ".($last_photo) ?> out of <?php echo $photo_count ?> | <a href='<?php echo $albums_page_link ?>'>Back to Albums</a></span>
+  <span class='main'><span class="photo-count">Photos <?php echo ($first_photo)." - ".($last_photo) ?> out of <?php echo $photo_count ?> | </span><a class="back-to-albums" href='<?php echo $albums_page_link ?>'>Back to Albums</a></span>
   <div class='pagination'>
     <?php if($prev_link): ?><a href='<?php echo $prev_link ?>'>Prev</a><?php endif; ?>
     <?php echo $pagination ?>
@@ -15,9 +15,8 @@
     <div class="row">
     <?php foreach($photos as $key=>$photo): ?>
       <div class="photo">
-        <?php $link = $page_link.(strstr($page_link, '?') ? '&amp;photo='.$key : '?photo='.$key) ?>
-        <a href='<?php echo $link ?>' title="<?php echo $photo['caption'] ?>">
-          <img src='<?php echo $photo['src'] ?>' alt="<?php echo $photo['caption'] ?>" style='max-width: <?php echo $thumb_size ?>px; max-height: <?php echo $thumb_size ?>px; _width: expression(this.width > <?php echo $thumb_size ?> ? <?php echo $thumb_size ?>: true); _height: expression(this.height > <?php echo $thumb_size ?> ? <?php echo $thumb_size ?>: true);' />
+        <a href='<?php echo $photo['src_big'] ?>' rel='fotobook' title="<?php echo $photo['caption'] ?>" id="photo<?php echo $photo['ordinal'] ?>">
+          <img src='<?php echo $photo['src_big'] ?>' alt="<?php echo $photo['caption'] ?>" style='max-width: <?php echo $thumb_size ?>px; max-height: <?php echo $thumb_size ?>px; _width: expression(this.width > <?php echo $thumb_size ?> ? <?php echo $thumb_size ?> : true); _height: expression(this.height > <?php echo $thumb_size ?> ? <?php echo $thumb_size ?>: true);' />
         </a>
       </div>
       <?php
