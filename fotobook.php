@@ -47,8 +47,6 @@ global $table_prefix, $wp_version;
 // include facebook api class
 include 'facebook-api-class.php';
 
-include 'ChromePhp.php';
-
 // plugin configuration variables
 define('FB_ALBUM_TABLE', $table_prefix.'fb_albums');
 define('FB_PHOTO_TABLE', $table_prefix.'fb_photos');
@@ -115,8 +113,8 @@ function fb_initialize() {
 	                        `caption` text,
 	                        `created` datetime,
 	                        `ordinal` int(11) unsigned NOT NULL default 0,
-									KEY `pid` (`pid`)
-	                      ) TYPE = MyISAM";
+							UNIQUE KEY `pid` (`pid`)
+	                      ) ENGINE = MyISAM";
 
 	$album_table_query = "CREATE TABLE `".FB_ALBUM_TABLE."` (
 	                        `aid` varchar(40),
@@ -133,7 +131,7 @@ function fb_initialize() {
 	                        `hidden` tinyint(1) unsigned NOT NULL default 0,
 	                        `ordinal` int(11) unsigned NOT NULL default 0,
 	                        UNIQUE KEY `aid` (`aid`)
-	                      ) TYPE = MyISAM";
+	                      ) ENGINE = MyISAM";
 
 	// this is an upgrade from v1
 	if(fb_table_exists(FB_ALBUM_TABLE) && $wpdb->get_results('SHOW COLUMNS FROM '.FB_ALBUM_TABLE." WHERE Field = 'timecached'")) {
@@ -542,7 +540,6 @@ function fb_update_album_order($order) {
 	global $wpdb;
 	$order = array_reverse($order);
 	foreach($order as $key=>$value) {
-		ChromePhp::log($key.','.$value);
 		$wpdb->update(FB_ALBUM_TABLE, array('ordinal' => $key), array('aid' => $value));
 	}
 }
