@@ -54,7 +54,7 @@ if ( empty($fb_appId)  || empty($fb_appSecret) ) : ?>
                 this link</a>. 
             </li>
             <li>
-                2. On the page, find the "Create New App" button at the top right, and click it to createa new Facebook App. 
+                2. On the page, find the "Create New App" button at the top right, and click it to create a new Facebook App. 
             </li>
             <li>
                 3. A box will pop up. Fill out the App Name field. You can select any app name that you like as long as FB 
