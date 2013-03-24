@@ -47,10 +47,10 @@ var fotobook = {
 		});
 	},
 	initManageList: function() {
-		var $list = jQuery('#fb-manage-list');
-		$list.sortable({
+		var list = jQuery('#fb-manage-list');
+		list.sortable({
 			update: function() {
-				var ids = $list.sortable('serialize', {
+				var ids = list.sortable('serialize', {
 					key: 'order[]',
 					expression: /=(.+)/
 				});
@@ -59,7 +59,7 @@ var fotobook = {
 			},
 			cursor: 'handle'
 		});
-		$list.find('.toggle-hidden').click(fotobook.toggleHidden);
+		list.find('.toggle-hidden').click(fotobook.toggleHidden);
 	},
 	linkNewAccount: function(message) {
 		jQuery.post('admin-ajax.php', 'action=fotobook&destroy_session=true', function(response) {

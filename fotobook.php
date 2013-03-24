@@ -74,6 +74,9 @@ if(fb_needs_upgrade()) {
 $fb_message = null;
 
 function fb_admin_scripts() {
+	//wp_enqueue_script('jquery');
+	wp_enqueue_script('jquery-ui-core');
+	wp_enqueue_script('jquery-ui-sortable');
 	wp_enqueue_style('fotobook-css', FB_PLUGIN_URL.'styles/admin-styles.css');
 	wp_enqueue_script('fotobook-js', FB_PLUGIN_URL.'js/admin.js', array('jquery', 'jquery-ui-sortable'), FB_VERSION);
 	wp_enqueue_script('colorbox', FB_PLUGIN_URL.'styles/colorbox/js/jquery.colorbox-min.js');
