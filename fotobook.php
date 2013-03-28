@@ -48,15 +48,19 @@ global $table_prefix, $wp_version;
 include 'facebook-api-class.php';
 
 // plugin configuration variables
-define('FB_ALBUM_TABLE', $table_prefix.'fb_albums');
-define('FB_PHOTO_TABLE', $table_prefix.'fb_photos');
-define('FB_POSTS_TABLE', $table_prefix.'posts');
-define('FB_PLUGIN_PATH', WP_PLUGIN_DIR.'/fotobook/');
+define('FB_PLUGIN_PATH',dirname(__FILE__).'/');
 define('FB_PLUGIN_URL', plugins_url().'/fotobook/');
+define('FB_CURRENT_THEME_PATH',get_theme_root().'/'.get_stylesheet());
+define('FB_CURRENT_THEME_URL',dirname(get_stylesheet_uri()));
+define('FB_CURRENT_THEMEPARENT_PATH',get_theme_root().'/'.get_template());
+define('FB_CURRENT_THEMEPARENT_URL',get_template_directory());
 define('FB_STYLE_URL', FB_PLUGIN_URL.'styles/'.get_option('fb_style').'/');
 define('FB_STYLE_PATH', FB_PLUGIN_PATH.'styles/'.get_option('fb_style').'/');
 define('FB_MANAGE_URL', (get_bloginfo('version') >= 2.7 ? 'media-new.php' : 'edit.php') .'?page=fotobook/manage-fotobook.php');
 define('FB_OPTIONS_URL', 'options-general.php?page=fotobook/options-fotobook.php');
+define('FB_ALBUM_TABLE', $table_prefix.'fb_albums');
+define('FB_PHOTO_TABLE', $table_prefix.'fb_photos');
+define('FB_POSTS_TABLE', $table_prefix.'posts');
 define('FB_WEBSITE', 'http://www.aaronharp.com/dev/wp-fotobook/');
 define('FB_VERSION', 3.22);
 define('FB_DONATE', 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=aaron%40freshwebs%2enet&item_name=Fotobook%20Donation&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=US&bn=PP%2dDonationsBF&charset=UTF%2d8');
@@ -74,7 +78,7 @@ if(fb_needs_upgrade()) {
 $fb_message = null;
 
 function fb_admin_scripts() {
-	//wp_enqueue_script('jquery');
+	wp_enqueue_script('jquery');
 	wp_enqueue_script('jquery-ui-core');
 	wp_enqueue_script('jquery-ui-sortable');
 	wp_enqueue_style('fotobook-css', FB_PLUGIN_URL.'styles/admin-styles.css');
@@ -784,12 +788,16 @@ function fb_display_main($content) {
 		$albums[$key]['thumb'] = fb_get_photo($albums[$key]['cover_pid'], 'thumb');
 		$albums[$key]['big_thumb'] = fb_get_photo($albums[$key]['cover_pid'],'full');
 	}
-
-	include(FB_STYLE_PATH.'main.php');
+	$templateFile = FB_STYLE_PATH.'main.php';
+	// Check to see if user is using customized main.php... 
+	if ( file_exists(FB_CURRENT_THEME_PATH.'/fotobook-styles/'.get_option('fb_style').'/main.php') ) { 
+		$templateFile = FB_CURRENT_THEME_PATH.'/fotobook-styles/'.get_option('fb_style').'/main.php'; 
+	}
+	elseif ( file_exists(FB_CURRENT_THEMEPARENT_PATH.'/fotobook-styles/'.get_option('fb_style').'/main.php') ) { 
+		$templateFile = FB_CURRENT_THEMEPARENT_PATH.'/fotobook-styles/'.get_option('fb_style').'/main.php'; 
+	}
+	include($templateFile);
 	?>
-	<div id="fotobook-credits" style="text-align: right;">
-		<small>Powered by <a href="http://www.aaronharp.com/dev/wp-fotobook/">Fotobook</a></small>
-	</div>
 <?php
 	// now capture the buffer and add it to $content
 	$content .= ob_get_clean();
@@ -881,7 +889,17 @@ function fb_display_album($content, $page_id) {
 
 	?>
 	<p style="display: none"><?php echo $hidden_top ?></p>
-	<?php include(FB_STYLE_PATH.'album.php') ?>
+	<?php
+	$templateFile = FB_STYLE_PATH.'album.php';
+	// Check to see if user is using customized album.php... 
+	if ( file_exists(FB_CURRENT_THEME_PATH.'/fotobook-styles/'.get_option('fb_style').'/album.php') ) { 
+		$templateFile = FB_CURRENT_THEME_PATH.'/fotobook-styles/'.get_option('fb_style').'/album.php'; 
+	}
+	elseif ( file_exists(FB_CURRENT_THEMEPARENT_PATH.'/fotobook-styles/'.get_option('fb_style').'/album.php') ) { 
+		$templateFile = FB_CURRENT_THEMEPARENT_PATH.'/fotobook-styles/'.get_option('fb_style').'/album.php'; 
+	}
+	include($templateFile) 
+	?>
 	<p style="display: none"><?php echo $hidden_bottom ?></p>
 <?php
 	$content .= ob_get_clean();
@@ -1008,9 +1026,24 @@ function fb_display_styles() {
 	$albums_page = get_option('fb_albums_page');
 	if ($post->ID == $albums_page || $post->post_parent == $albums_page) {
 		if (get_option('fb_style') == 'colorbox') {
-			wp_enqueue_style('fotobook-colorbox', FB_STYLE_URL.'colorbox.css');
+			$colorboxStyles = FB_STYLE_URL.'colorbox.css';
+			// Check to see if user has customized css... 
+			if ( file_exists(FB_CURRENT_THEME_PATH.'/fotobook-styles/colorbox/colorbox.css') ) { 
+				$colorboxStyles = FB_CURRENT_THEME_URL.'/fotobook-styles/colorbox/colorbox.css';
+			}
+			elseif ( file_exists(FB_CURRENT_THEMEPARENT_PATH.'/fotobook-styles/colorbox/colorbox.css') ) { 
+				$colorboxStyles = FB_CURRENT_THEMEPARENT_URL.'/fotobook-styles/colorbox/colorbox.css'; 
+			}
+			wp_enqueue_style('fotobook-colorbox', $colorboxStyles);
 		}
-		wp_enqueue_style('fotobook-style', FB_STYLE_URL.'style.css');
+		$fotobookStyles = FB_STYLE_URL.'style.css';
+		if ( file_exists(FB_CURRENT_THEME_PATH.'/fotobook-styles/'.get_option('fb_style').'/style.css') ) { 
+			$fotobookStyles = FB_CURRENT_THEME_URL.'/fotobook-styles/'.get_option('fb_style').'/style.css';
+		}
+		elseif ( file_exists(FB_CURRENT_THEMEPARENT_PATH.'/fotobook-styles/'.get_option('fb_style').'/colorbox.css') ) { 
+			$fotobookStyles = FB_CURRENT_THEMEPARENT_URL.'/fotobook-styles/'.get_option('fb_style').'/colorbox.css'; 
+		}
+		wp_enqueue_style('fotobook-style', $fotobookStyles);
 	}
 	if (is_active_widget('fb_photos_widget')) {
 		wp_enqueue_style('fotobook-widget', FB_PLUGIN_URL . 'styles/sidebar-style.css');
