@@ -4,8 +4,35 @@
 Fotobook Options Panel
 */
 
-// Attempt to get the AppID and App Secret
-//update_option('fb_app_id', ''); update_option('fb_app_secret', '');
+// Get FacebookAPI object.
+//      Note: Fotobook attempts to load the class earlier via a hooked action,
+//            see the function load_facebook_API in fotobook.php.
+global $fb_facebook;
+$facebook = $fb_facebook;
+
+
+// Check to see if the user was trying to set the App Id & Secret. If so, set them.
+if ( isset($_POST) && isset($_POST['appId']) && isset($_POST['appSecret']) ) {
+    echo 'about to set the app data<br/>';
+    // Save the App Id & Secret in the Wordpress options.
+    if ( $_POST['appId'] !== get_option('fb_app_id') ) 
+        update_option('fb_app_id', $_POST['appId']);
+    if ( $_POST['appSecret'] !== get_option('fb_app_secret')) 
+        update_option('fb_app_secret', $_POST['appSecret']);
+
+    // Now force the page to reload, so that the plugin can load Fotobook's Facebook API
+    // before the headers are sent.
+    $url = get_bloginfo('url') . '/wp-admin/' . FB_OPTIONS_URL;
+    echo '<script type="text/javascript">';
+    echo 'window.location.href="'.$url.'";';
+    echo '</script>';
+    echo '<noscript>';
+    echo '<meta http-equiv="refresh" content="0;url='.$url.'" />';
+    echo '</noscript>';
+    exit;
+}
+
+// Attempt to get the AppID and App Secret.
 $fb_appId           = ( isset($_POST['appId']) ) ? $_POST['appId'] : get_option('fb_app_id');
 $fb_appSecret       = ( isset($_POST['appSecret']) ) ? $_POST['appSecret'] : get_option('fb_app_secret');
 
@@ -23,7 +50,7 @@ if ( empty($fb_appId)  || empty($fb_appSecret) ) : ?>
                     <fieldset>
                         <label for="appId">
                         <input style="width: 200px;" type="text" name="appId" id="appId" value="<?php echo $fb_appId; ?>">
-                        Your application's ID (default: )</label><br><br>
+                        Your application's ID</label><br><br>
                     </fieldset>
                 </td>
             </tr>
@@ -33,7 +60,7 @@ if ( empty($fb_appId)  || empty($fb_appSecret) ) : ?>
                     <fieldset> 
                         <label="" for="appSecret">
                         <input style="width: 200px;" type="text" name="appSecret" id="appSecret" value="<?php echo $fb_appSecret; ?>">
-                        Your application's secret (default:)<br><br>
+                        Your application's secret<br><br>
                     </fieldset>
                 </td>
             </tr>
@@ -74,41 +101,53 @@ if ( empty($fb_appId)  || empty($fb_appSecret) ) : ?>
     </div>
 </div>
 <?php 
-elseif ( !empty($fb_appId) && !empty($fb_appSecret) ) : 
-    // If the App Id and App Secret are already set then  either the user just set them, or they
-    // have already been set and Fotobook's Facebook API will have been successfully initiated.
-    
-    // First check to see if the user was trying to set the App Id & Secret.
-    // If so, set them.
-    if ( isset($_POST) && isset($_POST['appId']) && isset($_POST['appSecret']) ) {
-            //echo 'about to set the app data<br/>';
-            // Save the App Id & Secret in the Wordpress options.
-            if ( $_POST['appId'] !== get_option('fb_app_id') ) 
-                update_option('fb_app_id', $_POST['appId']);
-            if ( $_POST['appSecret'] !== get_option('fb_app_secret')) 
-                update_option('fb_app_secret', $_POST['appSecret']);
-
-            // Now force the page to reload, so that the plugin can load Fotobook's Facebook API
-            // before the headers are sent.
-            $url = get_bloginfo('url') . '/wp-admin/' . FB_OPTIONS_URL;
-            echo '<script type="text/javascript">';
-            echo 'window.location.href="'.$url.'";';
-            echo '</script>';
-            echo '<noscript>';
-            echo '<meta http-equiv="refresh" content="0;url='.$url.'" />';
-            echo '</noscript>';
-            exit;
-    }
-
-    // Now see if Fotobook's Facebook API was loaded correctly. 
-    //      Note: Fotobook attempts to load the class earlier via a hooked action,
-    //            see the function load_facebook_API in fotobook.php
-    global $fb_facebook;
-    $facebook = $fb_facebook;
-    if ( !isset($facebook) ) { 
-        echo '<div class="error">There was a problem loading the Fotobook Facebook API. Contact your administrator.</div>';
-        exit;
-    }
+elseif ( !isset($facebook) ) : 
+    // The FacebookAPI object was not loaded for some reason. Notify user and exit.
+    echo '<div class="error">There was a problem loading the Fotobook Facebook API. Contact your administrator.</div>';
+    exit;
+elseif ( $facebook->user_logged_in() === false && isset($_GET['state']) ) : 
+    // The user tried to link a user account and failed. Have the user double check the App ID & Secret. ?>
+    <div class="wrap" style="width: 55%">
+        <h2>Are the App ID and App Secret Still Correct?</h2>
+        <div class="error">
+        <p>
+        Fotobook is having trouble linking your user account to facebook. Please double-check that your App ID and
+        App Secret still match the ones listed below. When you are sure they are right, click "Reset Facebook App Settings" 
+        below. You'll find a list of your apps if you login into your facebook account, and then navigate to 
+        <a href="https://developers.facebook.com/apps" target="_blank">this link</a>.
+        </p>
+        </div>  
+        <form method="post" id="app-setup" action="<?php echo FB_OPTIONS_URL; ?>">
+            <h3>Link to Facebok App</h3>
+            <table class="form-table" style="clear:none;">
+                <tr valign="top">
+                    <th scope="row">Application ID</th>
+                    <td>
+                        <fieldset>
+                            <label for="appId">
+                            <input style="width: 200px;" type="text" name="appId" id="appId" value="<?php echo $fb_appId; ?>">
+                            Your application's ID</label><br><br>
+                        </fieldset>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Application Secret</th>
+                    <td>
+                        <fieldset> 
+                            <label="" for="appSecret">
+                            <input style="width: 200px;" type="text" name="appSecret" id="appSecret" value="<?php echo $fb_appSecret; ?>">
+                            Your application's secret<br><br>
+                        </fieldset>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="submit" name="submit" class="button-secondary" value="Reset Facebook App Settings" /></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <?php set_option('fb_app_id',''); set_option('fb_app_secret',''); ?>
+<?php elseif ( !empty($fb_appId) && !empty($fb_appSecret) ) : 
 
     // Check to see if the user wants to de-link an account or a fan page. if so, remove the user or fan page.
     if ( isset($_GET['deactivate-facebook']) && isset($facebook->sessions[$_GET['deactivate-facebook']]) ) {
@@ -252,7 +291,7 @@ elseif ( !empty($fb_appId) && !empty($fb_appSecret) ) :
            <table class="accounts">
                 <tr>
                     <td valign="top" width="170">
-                        <h3><?php _e('Add an Account'); ?></h3>
+                        <h3><?php _e('Add a User Account'); ?></h3>
                     </td>
                     <td>
                         <?php if($facebook): ?>

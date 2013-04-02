@@ -42,6 +42,11 @@ function dm_prevent_update_check( $r, $url ) {
 }
 // End TEMPORARY code to prevent plugin update.
 
+/*
+require_once('ChromePhp.php');
+ChromePhp::log('ChromePhp says hello from fotobook.php');
+*/
+
 global $table_prefix, $wp_version;
 
 // include facebook api class
@@ -399,11 +404,11 @@ function fb_ajax_handler() {
 		$fb_appId			= get_option('fb_app_id');
 		$fb_appSecret		= get_option('fb_app_secret');
 		$facebook = new FacebookAPI($fb_appId, $fb_appSecret);
-		if($facebook->link_active()) {
+		if( $facebook->sessions_exist() || $facebook->fanpages_exist() ) {
 			$facebook->update_albums();
 			echo $facebook->msg;
 		} else {
-			echo 'There are no accounts linked to Fotobook.';
+			echo 'There are no user accounts or fanpages linked to Fotobook.';
 		}
 	}
 

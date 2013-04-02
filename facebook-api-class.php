@@ -40,10 +40,9 @@ class FacebookAPI {
         }
 
         // Set up sessions
-        //update_option('fb_facebook_session', array());
         $this->set_sessions();
         if ( count($this->sessions) == 0 ) { // No sessions, so notify user.
-            $this->msg = 'In order to begin using Fotobook, you must link it to at least one facebook account.';
+            //$this->msg = 'In order to begin using Fotobook, you must link it to at least one facebook account.';
         }
 
         // Set up fan pages.
@@ -51,11 +50,19 @@ class FacebookAPI {
 
         // determine how much to increment the progress bar after each request
         $this->progress  = get_option('fb_update_progress');
-        $this->increment = count($this->sessions) > 0 ? 100 / (count($this->sessions) * 3) : 0;
+        $totalSessionsAndPages = count($this->sessions) + count($this->fanpages);
+        $this->increment = ($totalSessionsAndPages > 0) ? (100 / ($totalSessionsAndPages * 3)) : 0;
+
+        /*
+        ChromePhp::log('FacebookAPI: ', $this->facebook);
+        ChromePhp::log('FacebookAPI::sessions: ', $this->sessions);
+        ChromePhp::log('FacebookAPI::fanpages', $this->fanpages);
+        ChromePhp::log('user_logged_in?: ', $this->user_logged_in());
+        */
         
     }
 
-    function link_active() {
+    function user_logged_in() {
         return ( $this->user ) ? true : false;
     }
 
@@ -204,11 +211,7 @@ class FacebookAPI {
 
     function set_fanpages() {
 
-        // Check to see if the user has tried to link a new fan page.
-        if ( isset($_POST['fanpage-id']) && !$this->sessions_exist() ) {
-            $this->msg = "You must first link Fotobook to a Facebook account before you can add a fan page.";
-        }
-        elseif ( isset($_POST['fanpage-id']) && $this->sessions_exist() ) {
+        if ( isset($_POST['fanpage-id']) ) {
 
             $pid = $_POST['fanpage-id'];
             $found = $this->get_fanpage($pid);
@@ -216,7 +219,6 @@ class FacebookAPI {
                 $this->msg = "You have already linked that fan page to Fotobook";
             } 
             else { 
-                
                 // Try to link the new fan page.
                 $success = $this->set_fanpage($_POST['fanpage-id']);
                 if ( $success ) { 
@@ -350,6 +352,14 @@ class FacebookAPI {
         } else { return false; }
     }
 
+    function fanpages_exist() {
+        $fanpages = $this->fanpages;
+        if ( count($fanpages) > 0 ) {
+            return true;
+        } else { return false; }
+    }
+
+
     function update_albums() {
         global $wpdb;
 
@@ -363,12 +373,13 @@ class FacebookAPI {
 
         // Create an array including all the user/sessions and fan pages.
         $sources = $this->get_sessions();
+        if ( $sources == false ) $sources = array();
         $sources = array_merge($sources, $this->get_fanpage('all'));
 
         // Get albums for each user/session and fan page from Facebook
         $fb_albums = array(); $fb_photos = array();
         $user_albums = array(); $user_photos = array();
-        foreach($sources as $key=>$source) {
+        foreach ($sources as $key=>$source) {
             // setup general info
             $id = '';
             if ( $source['uid'] ) {
@@ -389,7 +400,6 @@ class FacebookAPI {
                 // Update the progress bar
                 $this->update_progress();
 
-                
                 // Get photos album by album...
                 //      Note: Getting album by album in case there is a limit on how many photos can be returned at once.
                 //            This should avoid that problem.
@@ -491,7 +501,9 @@ class FacebookAPI {
 
             }
         }
-        
+
+        $this->update_progress();
+
         // Update the photos
         $wpdb->query('DELETE FROM '.FB_PHOTO_TABLE);
         $ordinal = 1;

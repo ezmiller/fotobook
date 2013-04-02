@@ -18,10 +18,10 @@ var fotobook = {
 			var sessionsExist = jQuery.parseJSON(response);
 			if ( !sessionsExist ) { // There are no linked sessions...
 
-				jQuery('#fb-panel input, #fb-panel select').attr('disabled', true);
-				jQuery('input[type="button"][name="link-new-account"]').attr('disabled', false);
+				//jQuery('#fb-panel input, #fb-panel select').attr('disabled', true);
+				//jQuery('input[type="button"][name="link-new-account"]').attr('disabled', false);
 
-			} else { console.log('there are sessions'); }
+			}
 		});
 
 		jQuery('#fb-panel input[type="button"][name="link-new-account"]').click(fotobook.linkNewAccount);

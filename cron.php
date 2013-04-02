@@ -8,7 +8,7 @@ if(isset($_GET['update']) && isset($_GET['secret']) && $_GET['secret'] == get_op
 	echo 'Updating Fotobook (be patient)...';
 	ob_flush(); flush();
 	$facebook = new FacebookAPI;
-	if($facebook->link_active())
+	if( $facebook->sessions_exist() || $facebook->fanpages_exist() )
 		$facebook->update_albums();
 	echo 'Done';
 } else {
