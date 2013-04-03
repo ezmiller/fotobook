@@ -367,8 +367,8 @@ class FacebookAPI {
 
         // If the mysql wait_timeout period for $wpdb is less than 25 seconds, increase it just to be safe.
         $wait_timeout = $wpdb->get_var("select @@wait_timeout");
-        if ( $wait_timeout < 25 ) {
-            $wpdb->query("set session wait_timeout=30");    
+        if ( $wait_timeout < 60 ) {
+            $wpdb->query("set session wait_timeout=60");    
         }
 
         // reset album import progress
